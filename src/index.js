@@ -5,12 +5,17 @@ import App from './shared/App';
 import Header from './shared/Header';
 import reportWebVitals from './reportWebVitals';
 
+// store 주입
+import { Provider } from "react-redux";
+import store from "./redux/configureStore";
+
+
 ReactDOM.render(
   
-  <React.StrictMode>
+  <Provider store={store}>
     <Header/>
-    <App />
-  </React.StrictMode>,
+    <App/>
+  </Provider>,
   document.getElementById('root')
 );
 
