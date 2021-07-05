@@ -19,3 +19,5 @@ firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 
 export {auth};
+
+// firebase 설정 완료!
