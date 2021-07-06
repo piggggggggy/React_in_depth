@@ -15,7 +15,6 @@ const Post = (props) => {
         <Grid>
           <Grid is_flex padding="4px 16px">
             <Image shape="circle" src={props.src}/>
-            {/* 이 부분에서 왜 props.src 로 넘겨주는지 이해가 안됨....props.src?????????? */}
             <Text bold>{props.user_info.user_name}</Text>
             <Text>{props.insert_dt}</Text>
           </Grid>

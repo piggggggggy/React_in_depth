@@ -3,6 +3,7 @@ import { produce } from "immer";
 import { setCookie, getCookie, deleteCookie } from "../../shared/Cookie";
 
 import { auth } from "../../shared/firebase";
+import firebase from "firebase/app"; 
 
 
 // actions
@@ -46,13 +47,15 @@ const user_initial = {   // 정말 user의 객체를 담는 initailState
 
 
 // middleware actions : 페이지 이동을 위해 미들웨어 chunk를 이용
-const loginAction = (user) => {
-	return function (dispatch, getState, {history}){
-		console.log(history);
-		dispatch(setUser(user));
-		history.push('/');
-	}
-};
+	// 얘는 이제 필요없으니 지운다! -현재 로그인 구현!!!
+// const loginAction = (user) => {
+// 	return function (dispatch, getState, {history}){
+// 		console.log(history);
+// 		dispatch(setUser(user));
+// 		history.push('/');
+// 	}
+// };
+
 
 	// auth에서 함수를 호출하는 역할
 const signupFB = (id, pwd, user_name) => {
@@ -68,7 +71,7 @@ const signupFB = (id, pwd, user_name) => {
 					displayName: user_name,
 
 				}).then(() => { // setUser 아직 이해가 안됨??????????????????????
-					dispatch(setUser({user_name: user_name, id: id, user_profile: ''}));
+					dispatch(setUser({user_name: user_name, id: id, user_profile: '', uid: user.user.uid}));
 					history.push('/');
 				}).catch((error) => {
 					console.log(error);
@@ -84,8 +87,67 @@ const signupFB = (id, pwd, user_name) => {
 				// ..
   		});
 	}
-}
+};
 
+const loginFB = (id, pwd) => {
+	return function (dispatch, getState, {history}){
+
+		// 인증상태 지속하며 로그인하기
+		auth.setPersistence(firebase.auth.Auth.Persistence.SESSION)
+		.then((res) => {
+			auth
+			.signInWithEmailAndPassword(id, pwd)
+			.then((user) => {
+				console.log(user);
+
+				dispatch(setUser({
+					user_name: user.user.displayName, 
+					id: id, 
+					user_profile: '',
+					uid: user.user.uid, //???? 고유값 넣어주기 나중에 쓸일이 있을거야,,
+				}));
+				// setUser 왜하는거지???????????????????????
+			
+				history.push('/');
+			
+			})
+			.catch((error) => {
+		  		var errorCode = error.code;
+		  		var errorMessage = error.message;
+				
+				console.log(error);		  
+			});
+		});
+	};
+};
+
+		// 여기는 정말 이해할 수 업서
+const loginCheckFB = () => {
+	return function (dispatch, getState, {history}){
+		auth.onAuthStateChanged((user) => {
+			if(user){
+				dispatch(setUser({
+					user_name: user.displayName,
+					user_profile: '',
+					id: user.email,
+					uid: user.uid,
+
+				}));
+			}else{
+				dispatch(logOut());
+			}
+		})
+	}
+};
+
+const logoutFB = () => {
+	return function (dispatch, getState, {history}) {
+		auth.signOut().then(() => {
+			dispatch(logOut());
+			history.replace('/');  // 뒤로가기 해도 그 페이지가 다시 안나오게  대체!!!
+		})
+	}
+}
 
 
 
@@ -135,8 +197,11 @@ const actionCreators = {
 	// logIn,
 	logOut,
 	getUser,
-	loginAction,
+	// loginAction,
 	signupFB,
+	loginFB,
+	loginCheckFB,
+	logoutFB,
 };
 
 export { actionCreators };
