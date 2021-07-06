@@ -4,31 +4,31 @@ import styled from "styled-components";
 const Btn = (props) => {
 
 
-	const {is_header, text, _onClick, is_float, is_mini} = props;
+	const {is_header, text, _onClick, is_float, is_mini, children} = props;
 
 
 	if(is_header) {
 		return(
 			<React.Fragment>
-				<HeaderBtn onClick={_onClick}>{text}</HeaderBtn>
+				<HeaderBtn onClick={_onClick}>{text? text: children}</HeaderBtn>
 			</React.Fragment>
 		)
 	}else if (is_float){
 		return (
 			<React.Fragment>
-				<FloatBtn onClick={_onClick}>{text}</FloatBtn>
+				<FloatBtn onClick={_onClick}>{text? text: children}</FloatBtn>
 			</React.Fragment>
 		)
 	}else if (is_mini){
 		return (
 			<React.Fragment>
-				<MiniBtn onClick={_onClick}>{text}</MiniBtn>
+				<MiniBtn onClick={_onClick}>{text? text: children}</MiniBtn>
 			</React.Fragment>
 		)
 	}else{
 		return (
 			<React.Fragment>
-				<SignBtn onClick={_onClick}>{text}</SignBtn>
+				<SignBtn onClick={_onClick}>{text? text: children}</SignBtn>
 			</React.Fragment>
 		)
 	}

@@ -44,7 +44,7 @@ const Header = (props) => {
 			<React.Fragment>
 				<Grid is_flex padding="4px 16px">
 					<Grid>
-						<Text bold size="24px" margin="0px">안뇽?</Text>
+						<Text bold size="24px" margin="0px">잠죽자</Text>
 					</Grid>
 					<Grid is_flex>
 						<Btn is_header text="내정보"/>
@@ -59,7 +59,7 @@ const Header = (props) => {
 			<React.Fragment>
 				<Grid is_flex padding="4px 16px">
 					<Grid>
-						<Text bold size="24px" margin="0px">안뇽?</Text>
+						<Text bold size="24px" margin="0px">잠죽자</Text>
 					</Grid>
 					<Grid is_flex>
 						<Btn is_header text="로그인" _onClick={() => {history.push('/login')}}/>
