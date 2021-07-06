@@ -3,8 +3,8 @@ import thunk from "redux-thunk";
 import { createBrowserHistory } from "history";
 import { connectRouter } from "connected-react-router";
 
-import User from "./modules/user"; // 왜 User 대문자?
-import Post from "./modules/post"; // 왜 Post 대문자?
+import User from "./modules/user"; // 왜 User 대문자???????????
+import Post from "./modules/post"; // 왜 Post 대문자???????????
 
 // 스토어에 히스토리 넣어주기
 export const history = createBrowserHistory();

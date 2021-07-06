@@ -1,6 +1,6 @@
 import firebase from "firebase/app";
 import "firebase/auth";
-
+import "firebase/firestore"
 
 
 const firebaseConfig = {
@@ -21,7 +21,8 @@ const apiKey = firebaseConfig.apiKey;
 
 // 다른 파일에서 firebase 가져와서 쓰는거 만들어주기
 const auth = firebase.auth();
+const firestore = firebase.firestore();
 
-export {auth, apiKey};
+export {auth, apiKey, firestore};
 
 // firebase 설정 완료!
