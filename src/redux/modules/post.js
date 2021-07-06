@@ -1,6 +1,7 @@
 import { createAction, handleActions } from "redux-actions";
 import { produce } from "immer";
 import { firestore } from "../../shared/firebase";
+import moment from "moment";
 
 
 
@@ -19,16 +20,60 @@ const initialState = {
 }
 
 const initialPost = {
-	id: 0,
-  user_info: {
-    user_name: "piggy",
-    user_profile: "https://media.vlpt.us/images/pyt4105/post/83f78553-ba38-44c9-aaf8-3f7a715d0701/%EA%B2%B8%EB%91%A5%EC%9D%B4%EB%B2%A4.jpg",
-  },
+	// id: 0,
+  // user_info: {
+  //   user_name: "piggy",
+  //   user_profile: "https://media.vlpt.us/images/pyt4105/post/83f78553-ba38-44c9-aaf8-3f7a715d0701/%EA%B2%B8%EB%91%A5%EC%9D%B4%EB%B2%A4.jpg",
+  // },
   image_url: "https://media.vlpt.us/images/pyt4105/post/83f78553-ba38-44c9-aaf8-3f7a715d0701/%EA%B2%B8%EB%91%A5%EC%9D%B4%EB%B2%A4.jpg",
   contents: "귀여운 벤이다!",
   comment_cnt: 6,
-  insert_dt: "2021-02-27 10:00:00",
+  insert_dt: moment().format("YYYY-MM-DD hh:mm:ss"),
+  // insert_dt: "2021-02-27 10:00:00",
 };
+
+
+
+// firestore에 데이터를 추가하는 함수
+const addPostFB = (contents="") => {
+  return function (dispatch, getState, {history}){
+    
+    // 콜렉션 선택
+    const postDB = firestore.collection("post");
+
+    // user 정보 가져오기
+    const _user = getState().user.user;
+    const user_info = {
+      user_name: _user.user_name,
+      user_id: _user.uid,
+      user_profile: _user.user_profile
+    };
+
+    const _post = {
+      ...initialPost,
+      contents: contents,
+      insert_dt: moment().format("YYYY-MM-DD hh:mm:ss"),
+
+    }
+
+    // 정말 컬렉션에 넣을 만한 정보인지 확인하기
+    // console.log({...user_info, ..._post});
+
+    // ~~~.add({dddddd})
+    postDB.add({...user_info, ..._post}).then((doc) => {
+      // 여기서도 리덕스와 firestore에서의 데이터 모양이 다르기 때문에 변형해서 넣어줘야함
+      let post = {user_info, ..._post, id: doc.id};
+
+      dispatch(addPost(post)); 
+
+      history.replace('/');
+    }).catch((err) => {
+      console.log("post 작성에 실패했어요!", err)
+    });
+
+  }
+}
+
 
 // firestore 연결  /  middleware
 const getPostFB = () => {
@@ -88,7 +133,7 @@ const getPostFB = () => {
 }
 
 // reducer
-
+// reducer 는 리덕스에 데이터를 추가해주는 역할을 하는 것 같다...
 export default handleActions(
 	{
 		[SET_POST]: (state, action) => produce(state, (draft) => {
@@ -96,7 +141,8 @@ export default handleActions(
 		}),
 
 		[ADD_POST]: (state, action) => produce(state, (draft) => {
-
+      draft.list.unshift(action.payload.post);
+      // 앞에다 붙여주기 위해서,,,
 		}),
 	}, initialState
 )
@@ -106,6 +152,7 @@ const actionCreators = {
 	setPost,
 	addPost,
   getPostFB,
+  addPostFB,
 }
 
 export { actionCreators };

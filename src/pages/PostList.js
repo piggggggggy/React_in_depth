@@ -14,7 +14,15 @@ const PostList = (props) => {
   const dispatch = useDispatch();
 
   React.useEffect(() => {
-    dispatch(postActions.getPostFB());
+
+    // list 페이지에 들어오는 순간 post를 가져오고 있어서
+    // post_list 길이가 0일 때만 post를 부르는 것으로,,,
+    // 사실 이해가 잘ㄷ 안된...............??????????????????????????
+    // 나중에 최신으로 정렬하면서 해결될 문제
+    if(post_list.length === 0){
+      dispatch(postActions.getPostFB());
+    }
+
   }, []); // 여기 부분도 이해가 안되요.,,,,,
 
   return (

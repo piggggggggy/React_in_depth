@@ -10,7 +10,7 @@ const Input = (props) => {
 		return(
 			<React.Fragment>
 				<Grid>
-					{label ? '': <Text margin="0px">{label}</Text>}
+					{label ? <Text margin="0px">{label}</Text> : ''}
 					<TextArea rows={10} placeholder={placeholder} onChange={_onChange}/>
 				</Grid>
 			</React.Fragment>
@@ -19,7 +19,7 @@ const Input = (props) => {
   		return (
     		<React.Fragment>
 				<Grid>
-					{label ? '': <Text margin="0px">{label}</Text>}
+					{label ? <Text margin="0px">{label}</Text> : ''}
 					<InputBox type={type} placeholder={placeholder} onChange={_onChange}/>
 				</Grid>
 			</React.Fragment>

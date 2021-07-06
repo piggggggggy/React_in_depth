@@ -3,7 +3,7 @@ import styled from "styled-components";
 
 const Grid = (props) => {
 
-  const {is_flex, width, margin, padding, bg, children} = props;
+  const {is_flex, width, margin, padding, bg, children, center} = props;
 	
 	//  style 을 담당하는 것과 아닌 것을 구분하기 위해
 	const styles = {
@@ -12,6 +12,7 @@ const Grid = (props) => {
 		margin: margin,
 		padding: padding,
 		bg: bg,
+    center: center,
 	};
   return (
 	  <React.Fragment>
@@ -29,6 +30,7 @@ Grid.defaultProps = {
   padding: false,
   margin: false,
   bg: false,
+  center: false,
 }
 
 const GridBox = styled.div`
@@ -39,6 +41,7 @@ const GridBox = styled.div`
   ${(props) => (props.margin? `margin: ${props.margin}`: '' )};
   ${(props) => (props.bg? `background-color: ${props.bg}`: '' )};
   ${(props) => (props.is_flex? `display: flex; justify-content: space-between; align-items: center;` : '')};
+  ${(props) => (props.center? `text-align: center`: ``)}
 `;
 
 

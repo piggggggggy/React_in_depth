@@ -42,7 +42,7 @@ function App() {
         <Route path="/posting" exact component={Posting}/>
       </ConnectedRouter>
       <Permit>
-        <Btn is_float text="+"/>
+        <Btn is_float text="+" _onClick={(props) => {history.push('/posting');}}/>
       </Permit>
     </React.Fragment>
   );
