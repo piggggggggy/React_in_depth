@@ -46,11 +46,8 @@ const Posting = (props) => {
   return (
 		<React.Fragment>
 			<Grid padding="4px 16px">
-				<Text bold size="36px" text="게시글 작성"/>
-				<Grid is_flex>
-					<Upload/>
-					<Btn is_mini text="이미지 선택"/>
-				</Grid>
+				<Text bold size="36px">게시글 작성</Text>
+				<Upload/>
 				<Text bold size="20px" margin="0px">미리보기</Text>
 			</Grid>
 			<Grid>
