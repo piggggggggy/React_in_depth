@@ -4,14 +4,14 @@ import { Text, Grid } from "./index";
 
 const Input = (props) => {
 
-	const {label, placeholder, _onChange, type, multiLine} = props;
+	const {label, placeholder, _onChange, type, multiLine, value} = props;
 
 	if (multiLine) {
 		return(
 			<React.Fragment>
 				<Grid>
 					{label ? <Text margin="0px">{label}</Text> : ''}
-					<TextArea rows={10} placeholder={placeholder} onChange={_onChange}/>
+					<TextArea rows={10} value={value} placeholder={placeholder} onChange={_onChange}/>
 				</Grid>
 			</React.Fragment>
 		)
@@ -35,6 +35,7 @@ Input.defaultProps = {
 	placeholder: "아이디를 입력해주세요.",
 	_onChange: () => {},
 	type: '',
+	value: '',
 };
 
 const InputBox = styled.input`

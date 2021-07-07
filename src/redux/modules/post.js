@@ -5,15 +5,18 @@ import moment from "moment";
 import { storage } from "../../shared/firebase";
 
 import { actionCreators as imageActions } from "./post";
+import _ from "lodash";
 
 
 // action
 const SET_POST = "SET_POST";
 const ADD_POST = "ADD_POST";
+const EDIT_POST = "EDIT_POST";
 
 // action creator
 const setPost = createAction(SET_POST, (post_list) => ({post_list}));
 const addPost = createAction(ADD_POST, (post) => ({post}));
+const editPost = createAction(EDIT_POST, (post_id, post) => ({post_id, post}));
 
 
 // initialState
@@ -165,7 +168,60 @@ const getPostFB = () => {
                 // action 을 부르는거??
     })
   }
-}
+};
+
+// 수정 함수 - 파이어스토어 수정
+const editPostFB = (post_id=null, post={}) => {
+  return function (dispatch, getState, {history}){
+    
+    if(!post_id){
+      console.log('게시물 정보가 없어요!!@')
+      return; 
+    }
+    
+    // 포스트에 이미 있었던 링크랑  프리뷰에 저장되어 있는 값이랑 비교해서 
+    // 이미지가 수정되었는지 아닌지 판단
+    const _image = getState().image.preview;
+    // 이 게시글 하나의 정보도 알아와야함
+    const _post_idx = getState().post.list.findIndex(p => p.id === post_id);
+    const _post = getState().post.list[_post_idx];
+    console.log(_post);
+    // text
+    const postDB = firestore.collection("post");
+
+    if(_image === _post.image_url){  // 어렵다... 
+      postDB.doc(post_id).update(post).then(doc => {
+        dispatch(editPost(post_id, {...post}));
+        history.replace('/');
+      });
+      return;
+    }else{
+      const user_id = getState().user.user.uid;
+      // upload 가져옴
+      const _upload = storage.ref(`images/${user_id}_${new Date().getTime()}`).putString(_image, "data_url");
+
+      // 아직도 여긴 잘 모르겠다....?????????????????????
+      _upload.then(snapshot => {
+        snapshot.ref.getDownloadURL().then(url => {
+          console.log(url);
+          
+          return url;
+        }).then(url => {
+              // 정말 컬렉션에 넣을 만한 정보인지 확인하기
+          // console.log({...user_info, ..._post});
+          postDB.doc(post_id).update({...post, image_url: url}).then(doc => {
+            dispatch(editPost(post_id, {...post, image_url: url}));
+            history.replace('/');
+          });
+        }).catch((err) => {
+          window.alert("앗! 이미지 업로드에 문제가 있어요!!");
+          console.log("앗! 이미지 업로드에 문제가 있어요!!", err); // 오류 후처리작업을 catch에서 해주기도 함, dispatch나 history 등으로
+        })
+      });
+    }
+  }
+};
+
 
 // reducer
 // reducer 는 리덕스에 데이터를 추가해주는 역할을 하는 것 같다...
@@ -179,6 +235,12 @@ export default handleActions(
       draft.list.unshift(action.payload.post);
       // 앞에다 붙여주기 위해서,,,
 		}),
+    
+    [EDIT_POST]: (state, action) => produce(state, (draft) => {
+      // firebase 에서 가져온 리스트에서 몇번째 것을 고칠 것인지 알아야함 //  수정하기 다시한번 보기,,, 넘어렵다.
+      let idx = draft.list.findIndex((p) => p.id === action.payload.post_id);
+      draft.list[idx] = {...draft.list[idx], ...action.payload.post};
+    }),
 	}, initialState
 )
 
@@ -186,8 +248,10 @@ export default handleActions(
 const actionCreators = {
 	setPost,
 	addPost,
+  editPost,
   getPostFB,
   addPostFB,
+  editPostFB,
 }
 
 export { actionCreators };

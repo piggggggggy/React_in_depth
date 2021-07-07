@@ -9,7 +9,9 @@ import { actionCreators as postActions } from "../redux/modules/post";
 const PostList = (props) => {
   const post_list = useSelector((state) => state.post.list);
                                             // 모듕 post에 데이터 가져오기!!!!
-  console.log(post_list);
+  const user_info = useSelector((state) => state.user.user);
+                                            // 유저정보 가져오기
+
 
   const dispatch = useDispatch();
 
@@ -28,7 +30,12 @@ const PostList = (props) => {
   return (
     <React.Fragment>
       {post_list.map((p, idx) => {
-        return <Post key={p.id} {...p}/>
+                                          // 옵셔널체이닝?????????????
+        if(p.user_info.user_id === user_info?.uid){
+          return <Post key={p.id} {...p} is_me/>
+        }else{
+          return <Post key={p.id} {...p}/>
+        }
       })}
     </React.Fragment>
     )

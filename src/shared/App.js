@@ -10,6 +10,8 @@ import Login from "../pages/Login";
 import Signup from "../pages/Signup";
 import Detail from "../pages/Detail";
 import Posting from "../pages/Posting";
+import Search from "./Search"
+import Notification from "../pages/Notification";
 import { actionCreators as userActions } from "../redux/modules/user";
 
 import { useDispatch } from "react-redux";
@@ -40,6 +42,9 @@ function App() {
         <Route path="/signup" exact component={Signup}/>
         <Route path="/detail/:id" exact component={Detail}/>
         <Route path="/posting" exact component={Posting}/>
+        <Route path="/posting/:id" exact component={Posting}/>
+        <Route path="/search" exact component={Search}/>
+        <Route path="/noti" exact component={Notification}/>
       </ConnectedRouter>
       <Permit>
         <Btn is_float text="+" _onClick={(props) => {history.push('/posting');}}/>
