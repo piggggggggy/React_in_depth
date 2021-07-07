@@ -2,7 +2,9 @@ import { createAction, handleActions } from "redux-actions";
 import { produce } from "immer";
 import { firestore } from "../../shared/firebase";
 import moment from "moment";
+import { storage } from "../../shared/firebase";
 
+import { actionCreators as imageActions } from "./post";
 
 
 // action
@@ -55,24 +57,57 @@ const addPostFB = (contents="") => {
       insert_dt: moment().format("YYYY-MM-DD hh:mm:ss"),
 
     }
+    // firestore에 이미지 url을 업로드 하기 위해서는 
+    // storage에 일단 이미지를 저장
+    // - 다운로드 url 가져오기
+    // - 이 url이 가져와지면 그때 firestore에 저장
 
-    // 정말 컬렉션에 넣을 만한 정보인지 확인하기
-    // console.log({...user_info, ..._post});
 
-    // ~~~.add({dddddd})
-    postDB.add({...user_info, ..._post}).then((doc) => {
-      // 여기서도 리덕스와 firestore에서의 데이터 모양이 다르기 때문에 변형해서 넣어줘야함
-      let post = {user_info, ..._post, id: doc.id};
+      //preview 가져오기
+    const _image = getState().image.preview;
 
-      dispatch(addPost(post)); 
+    console.log(_image);
+    console.log(typeof _image);
 
-      history.replace('/');
-    }).catch((err) => {
-      console.log("post 작성에 실패했어요!", err)
+
+    // 다운로드 url을 업로드 하는 과정????? url 가져오는거?????????
+                                              // 중복값을 방지하기 위해 아이디와 시간을 더해서 만들어줌
+    const _upload = storage.ref(`images/${user_info.user_id}_${new Date().getTime()}`).putString(_image, "data_url");
+
+    // 아직도 여긴 잘 모르겠다....?????????????????????
+    _upload.then(snapshot => {
+      snapshot.ref.getDownloadURL().then(url => {
+        console.log(url);
+        
+        return url;
+      }).then(url => {
+            // 정말 컬렉션에 넣을 만한 정보인지 확인하기
+        // console.log({...user_info, ..._post});
+
+        // ~~~.add({dddddd})
+        postDB.add({...user_info, ..._post, image_url: url }).then((doc) => {
+          // 여기서도 리덕스와 firestore에서의 데이터 모양이 다르기 때문에 변형해서 넣어줘야함
+          let post = {user_info, ..._post, id: doc.id, image_url: url,};
+
+          dispatch(addPost(post)); 
+
+          history.replace('/');
+
+          // 업로드가 잘 끝났으면 // preview 를 null 값으로 바꿔주기 // 너무 복잡하다ㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏ
+          dispatch(imageActions.setPreview(null));
+
+        }).catch((err) => {
+          window.alert("앗! 포스트 작성이 문제가 있어요!");
+          console.log("post 작성에 실패했어요!", err)
+        });
+
+      }).catch((err) => {
+        window.alert("앗! 이미지 업로드에 문제가 있어요!!");
+        console.log("앗! 이미지 업로드에 문제가 있어요!!", err); // 오류 후처리작업을 catch에서 해주기도 함, dispatch나 history 등으로
+      })
     });
-
   }
-}
+} // 다 합쳐준것!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 
 // firestore 연결  /  middleware
