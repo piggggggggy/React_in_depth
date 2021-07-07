@@ -12,12 +12,14 @@ import { storage } from "../../shared/firebase";
 // action
 const UPLOADING = "UPLOADING";
 const UPLOAD_IMAGE = "UPLOAD_IMAGE";
+const SET_PREVIEW = "SET_PREVIEW";
 
 
 
 // acrtion creator
 const uploading = createAction(UPLOADING, (uploading) => ({uploading}));
 const uploadImage = createAction(UPLOAD_IMAGE, (image_url) => ({image_url}));
+const setPreview = createAction(SET_PREVIEW, (preview) => ({preview}));
 
 
 
@@ -25,6 +27,7 @@ const uploadImage = createAction(UPLOAD_IMAGE, (image_url) => ({image_url}));
 const initialState = {
     image_url: '',
     uploading: false,
+    preview: "https://via.placeholder.com/400x300",
 };
 
     // firebase 에서 실제로 업로드하는 것
@@ -69,12 +72,19 @@ export default handleActions({
         draft.uploading = action.payload.uploading;
     }),
 
+    [SET_PREVIEW]: (state, action) => produce(state, (draft) => {
+        draft.preview = action.payload.preview;
+    }),
+
+
 }, initialState);
 
 
 const actionCreators = {
+    uploadImage,
     uploadImageFB,
     // uploading 은 밖에서 호출할 필요가 없으므로 내보낼필요가 없다
+    setPreview,
 };
 
 export {actionCreators};

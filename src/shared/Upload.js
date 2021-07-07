@@ -18,8 +18,23 @@ const Upload = (props) => {
 		console.log(e);
 		console.log(e.target);
 		console.log(e.target.files[0]);
-
 		console.log(fileInput.current.files[0]);
+
+		// 자바스크립트의 파일리더를 활용해 객체를 읽어와서 preview에 뿌려주기
+		const reader = new FileReader();
+		const file = fileInput.current.files[0];
+
+		reader.readAsDataURL(file);
+		
+		// 읽기가 끝났을 때 이벤트를 받아와야 읽어온 결과갑을 받아올 수 있음
+														// 그 결과값을 posting 으로 옮기려면 리덕스에 올려야함
+		reader.onloadend = () => {
+			console.log(reader.result);
+
+			// 프리뷰 넣어주기
+			dispatch(imageActions.setPreview(reader.result));
+		}
+
 	}
 
 	// storage에 이미지 업로드하기

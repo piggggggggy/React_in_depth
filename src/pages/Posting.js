@@ -20,6 +20,7 @@ const Posting = (props) => {
 	// 일단 is_login 가져오기, user.js에 있음
 	const is_login = useSelector((state) => state.user.is_login);
 	const {history} = props; // 미들웨어 만들어놔서 props 로 가져오나??????
+	const preview = useSelector((state) => state.image.preview);
 
 	// textarea 값 받아오기
 	const [contents, setContents] = React.useState('');
@@ -51,7 +52,7 @@ const Posting = (props) => {
 				<Text bold size="20px" margin="0px">미리보기</Text>
 			</Grid>
 			<Grid>
-				<Image shape="rectangle" src={props.src}/>
+				<Image shape="rectangle" src={preview? preview:"https://via.placeholder.com/400x300"}/>
 			</Grid>
 			<Grid padding="4px 16px">
 				<Input _onChange={changeContents} multiLine label="게시글 내용" placeholder="게시글 작성"/>
@@ -62,7 +63,7 @@ const Posting = (props) => {
 }
 
 Posting.defaultProps = {
-	preview: "https://media.vlpt.us/images/pyt4105/post/83f78553-ba38-44c9-aaf8-3f7a715d0701/%EA%B2%B8%EB%91%A5%EC%9D%B4%EB%B2%A4.jpg",
+	preview: "https://via.placeholder.com/400x300",
 
 };
 
